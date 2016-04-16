@@ -1,3 +1,0 @@
-deserialize {
-	mainThread = "ManagerGameLoop"
-}
