@@ -91,6 +91,7 @@ function SphereCreator:makeSphereMesh(c, r)
     -- vbo:bless();
     local mesh = MOAIMesh.new();
     mesh:setVertexBuffer(vbo, vertexFormat);
+    mesh:setTotalElements(vbo:countElements(vertexFormat))
     mesh:setPrimType(MOAIMesh.GL_TRIANGLES);
     return mesh;
 end
