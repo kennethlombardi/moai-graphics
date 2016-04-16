@@ -13,34 +13,34 @@ local function objToMesh(obj)
     local faces = obj.faces;
     local vertexFormat = createVertexFormat();
     local vbo = MOAIVertexBuffer.new()
-    vbo:setFormat(vertexFormat)
-    vbo:reserveVerts(3 * #faces);
-    
+    -- vbo:setFormat(vertexFormat)
+    vbo:reserve(3 * #faces);
+
     local function writeVertex(vbo, vertex, uv, color)
         vbo:writeFloat(vertex.x, vertex.y, vertex.z)
         vbo:writeFloat(uv.x, uv.y);
         vbo:writeColor32(color.r, color.g, color.b);
     end
-    
+
     local color = {r = 0, g = 1, b = 0};
     for index, face in pairs(faces) do
         writeVertex(vbo, face.v1, {x = 0, y = 0}, color)
         writeVertex(vbo, face.v2, {x = 0, y = 0}, color)
         writeVertex(vbo, face.v3, {x = 0, y = 0}, color)
     end
-    
-    vbo:bless()
-    
+
+    -- vbo:bless()
+
     local mesh = MOAIMesh.new();
-    mesh:setVertexBuffer(vbo);
+    mesh:setVertexBuffer(vbo, vertexFormat);
     mesh:setPrimType(MOAIMesh.GL_TRIANGLES);
-    
+
     return mesh;
 end
 
 -- MOAIModelCreator
 function MOAIModelCreator:create(properties)
-    if not properties.mesh then 
+    if not properties.mesh then
         local obj = Factory:create("Obj", properties);
         properties.mesh = objToMesh(obj)
     end
@@ -56,7 +56,7 @@ function MOAIModelCreator:create(properties)
 end
 --
 
-return function(factory) 
+return function(factory)
     Factory = factory;
     return MOAIModelCreator;
 end

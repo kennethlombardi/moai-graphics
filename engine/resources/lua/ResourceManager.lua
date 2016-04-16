@@ -4,7 +4,7 @@ local ResourceManager = {
 	handlers = {};
 };
 
-function ResourceManager:addToCache(key, value) 
+function ResourceManager:addToCache(key, value)
 	self.cache[key] = value;
 end
 
@@ -12,11 +12,11 @@ function ResourceManager:getFromCache(key)
 	return self.cache[key];
 end
 
-function ResourceManager:load(typeName, fileName) 
+function ResourceManager:load(typeName, fileName)
 	return self.handlers[typeName]:load(fileName);
 end
 
-function ResourceManager:register(typeName, handler) 
+function ResourceManager:register(typeName, handler)
 	self.handlers[typeName] = handler;
 end
 
@@ -34,12 +34,13 @@ function Creator:new(object)
 	self.__index = self;
 	return object;
 end
--- 
+--
 
 -- Creators
-local MOAITextureCreator = Creator:new(); 
+local MOAITextureCreator = Creator:new();
 local MOAIFileCreator = Creator:new();
 local MOAIFontCreator = Creator:new();
+local MOAIStyleCreator = Creator:new();
 local MOAIShaderCreator = Creator:new();
 local MOAISoundCreator = Creator:new();
 local MOAIObjCreator = Creator:new();
@@ -64,7 +65,7 @@ function MOAIConfigurationHandler:load(fileName)
 	function deserialize(args)
 		configuration = args;
 	end
-	local fullPath = "../configurations/"..fileName;
+	local fullPath = "resources/configurations/"..fileName;
 	if require("FileSystem"):checkFileExists(fullPath) then
 		dofile(fullPath);
 	end
@@ -73,7 +74,7 @@ end
 --
 
 -- MOAIFileHandler
-function MOAIFileHandler:load(fullPath) 
+function MOAIFileHandler:load(fullPath)
 	local FileSystem = require("FileSystem");
 	local file = "";
 	if FileSystem:checkFileExists(fullPath) then
@@ -92,12 +93,12 @@ end
 
 -- MOAIUserDataHandler
 function MOAIUserDataHandler:load(fileName)
-	dofile("Pickle.lua");
+	dofile("resources/lua/Pickle.lua");
 	local configuration = {};
 	function deserialize(args)
 		configuration = args;
 	end
-	local fullPath = "../userData/"..fileName;
+	local fullPath = "resources/userData/"..fileName;
 	if require("FileSystem"):checkFileExists(fullPath) then
 		dofile(fullPath);
 	end
@@ -115,20 +116,40 @@ function MOAIFontCreator:createFromFile(fileName)
 	if font == nil then
 		properties = {
 			name = "arial-rounded.ttf",
-			--name = "horrendo.ttf",
 			characterSet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,.?!",
 			points = 12,
 			dpi = 144,
 		}
 		font = MOAIFont.new();
-		font:loadFromTTF(properties.name, properties.characterSet, properties.points, properties.dpi);
-		ResourceManager:addToCache(fileName, font);
+		font:load("resources/lua/"..properties.name);
+        font:preloadGlyphs(properties.characterSet, 12)
+        -- font:preloadGlyphs(properties.characterSet, 24)
+        -- font:preloadGlyphs(properties.characterSet, 32)
+        -- font:preloadGlyphs(properties.characterSet, 42)
+
+		ResourceManager:addToCache("resources/lua"..fileName, font);
 	end
 	return font;
 end
 
 function MOAIFontCreator:load(fileName)
 	return self:createFromFile(fileName);
+end
+--
+
+-- MOAIStyleCreator
+function MOAIStyleCreator:createFromFile(fileName)
+    function newStyle(font, size)
+        local style = MOAITextStyle.new()
+        style:setFont(font)
+        style:setSize(size)
+        return style;
+    end
+    return newStyle
+end
+
+function MOAIFontCreator:load(fileName)
+    return self:createFromFile(fileName);
 end
 --
 
@@ -143,17 +164,17 @@ local function objStreamToVertexAndFaceLists(objStream)
         local vertex = {x = x, y = y, z = z}
         table.insert(vertices, vertex)
     end
-    
+
     local faces = {};
     local vertices = {};
     local comments = {};
-    
+
     -- handlers
     local handlers = {};
     function handlers:register(key, handler)
         self[key] = handler;
     end
-    
+
     function handlers:handle(key, payload)
         local method = self[key]; --:handle(payload);
         if (method) then method:handle(payload)
@@ -168,7 +189,7 @@ local function objStreamToVertexAndFaceLists(objStream)
 
     -- vertexHandler
     local vertexHandler = {}
-    
+
     function vertexHandler:handle(vertexString)
         local vertex = {}
         for i in string.gmatch(vertexString, "%S+") do
@@ -187,48 +208,50 @@ local function objStreamToVertexAndFaceLists(objStream)
         end
         pushFace(faces, vertices[tonumber(face[1])], vertices[tonumber(face[2])], vertices[tonumber(face[3])]);
     end
-    
+
     -- globalHandler
     local globalHandler = {}
     function globalHandler:handle(global)
     end
-    
+
     handlers:register('v', vertexHandler);
     handlers:register('#', commentHandler);
     handlers:register('f', faceHandler);
     handlers:register('g', globalHandler);
-    
+
     for line in objStream:lines() do
         handlers:handle(line:sub(1, 1), line)
     end
-    
+
     return {faces = faces, vertices = vertices};
 end
 
 function MOAIObjCreator:load(filename)
-	local path = "../models/"..filename;
+    -- use the resource manager
 	local obj = nil; --ResourceManager:getFromCache(path);
 	if obj == nil then
-		local objFileStream = ResourceManager:load("ObjFileStream", path);
+		local objFileStream = ResourceManager:load("ObjFileStream", filename);
 		local obj = objStreamToVertexAndFaceLists(objFileStream);
 		objFileStream:close();
-		ResourceManager:addToCache(path, obj);
+		ResourceManager:addToCache(filename, obj);
 	end
-	return ResourceManager:getFromCache(path);
+	return ResourceManager:getFromCache(filename);
 end
 --
 
 -- MOAIObjFileStreamHandler
 function MOAIObjFileStreamHandler:load(filename)
-	local path = "../models/"..filename;
+    -- use the resource manager
+	local path = "resources/models/"..filename;
 	local file = io.open(path, "rt");
 	return file;
 end
 --
 
 -- MOAITextureCreator
-function MOAITextureCreator:load(fileName) 
-	local path = "../textures/"..fileName;
+function MOAITextureCreator:load(fileName)
+    -- use the resource manager
+	local path = "resources/textures/"..fileName;
 	local texture = ResourceManager:getFromCache(path);
 	if texture == nil then
 		texture = require("MOAITexture"):allocate();
@@ -238,8 +261,8 @@ function MOAITextureCreator:load(fileName)
 		moaiTexture:load(moaiImage);
 		texture:setName(fileName);
 		texture:setUnderlyingType(moaiTexture);
-		
-		
+
+
 		local sizex, sizey = moaiTexture:getSize();
 		texture:setSize(sizex, sizey)
 		ResourceManager:addToCache(path, texture);
@@ -252,15 +275,15 @@ end
 --
 
 -- MOAIScriptHandler
-function MOAIScriptHandler:load(fileName)	
-	local fullPath = "../scripts/"..fileName;
+function MOAIScriptHandler:load(fileName)
+	local fullPath = "resources/scripts/"..fileName;
 	local script = ResourceManager:getFromCache(fullPath);
 	if script ~= nil then return script end;
 
 	-- If the script didn't exist in the cache
 	if require("FileSystem"):checkFileExists(fullPath) then
 		script = dofile(fullPath);
-		ResourceManager:addToCache(fullPath, script);	
+		ResourceManager:addToCache(fullPath, script);
 	else
 		-- script is a do nothing anonymous function
 		script = {update = function() end, name = "AnonymousScript"};
@@ -272,26 +295,28 @@ end
 
 -- MOAIShaderCreator
 function MOAIShaderCreator:load(fileName)
-	local fullPath = "../shaders/"..fileName;
+	local fullPath = "resources/shaders/"..fileName;
 	local vsh = require("FileSystem"):load("File", fullPath..".vsh", "rb");
 	local fsh = require("FileSystem"):load("File", fullPath..".fsh", "rb");
-	local shader = MOAIShader.new();
+	local program = MOAIShaderProgram.new();
     -- color = MOAIColor.new ()
     -- color:setColor ( 1, 1, 0, 0 )
-	shader:reserveUniforms(2);
-	shader:declareUniform(1, 'transform', MOAIShader.UNIFORM_WORLD_VIEW_PROJ);
-    shader:declareUniform(2, 'maskColor', MOAIShader.UNIFORM_COLOR);
+	program:reserveUniforms(2);
+	program:declareUniform(1, 'transform', MOAIShaderProgram.UNIFORM_WORLD_VIEW_PROJ);
+    program:declareUniform(2, 'maskColor', MOAIShaderProgram.UNIFORM_COLOR);
     --shader:setAttrLink ( 2, color, MOAIColor.COLOR_TRAIT )
-	shader:setVertexAttribute(1, 'position');
-	shader:setVertexAttribute(2, 'uv');
-	shader:setVertexAttribute(3, 'color');	
-	shader:load(vsh, fsh);
+	program:setVertexAttribute(1, 'position');
+	program:setVertexAttribute(2, 'uv');
+	program:setVertexAttribute(3, 'color');
+	program:load(vsh, fsh);
+    local shader = MOAIShader.new()
+    shader:setProgram(program)
 	return shader;
 end
 --
 
 function MOAISoundCreator:load(fileName)
-	local fullPath = "../sounds/"..fileName;
+	local fullPath = "resources/sounds/"..fileName;
 	local sound = MOAIUntzSound.new();
 	sound:load(fullPath);
 	return sound;
@@ -301,7 +326,8 @@ local function init()
 	ResourceManager:register("Texture", MOAITextureCreator:new());
 	ResourceManager:register("Configuration", MOAIConfigurationHandler:new());
 	ResourceManager:register("UserData", MOAIUserDataHandler:new());
-	ResourceManager:register("Font", MOAIFontCreator:new());
+    ResourceManager:register("Font", MOAIFontCreator:new());
+	ResourceManager:register("Style", MOAIStyleCreator:new());
 	ResourceManager:register("Script", MOAIScriptHandler:new());
 	ResourceManager:register("Shader", MOAIShaderCreator:new());
 	ResourceManager:register("File", MOAIFileHandler:new());

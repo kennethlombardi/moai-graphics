@@ -23,6 +23,10 @@ function TextBox:baseSetFont(font)
 	self.font = font;
 end
 
+function TextBox:baseSetStyle(style)
+	self.style = style;
+end
+
 function TextBox:baseSetRect(x1, y1, x2, y2)
 	self.rectangle.x1 = x1;
 	self.rectangle.y1 = y1;
@@ -41,6 +45,7 @@ end
 function TextBox:free()
 	self:baseFree();
 	self.font = nil;
+	self.style = nil;
 end
 
 function TextBox:registerScript(script)
@@ -53,6 +58,10 @@ end
 
 function TextBox:setFont(font)
 	self:baseSetFont(font);
+end
+
+function TextBox:setStyle(style)
+	self:baseSetStyle(style)
 end
 
 --[[

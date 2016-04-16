@@ -4,11 +4,11 @@ function writeTri(vbo, p1, p2, p3, uv1, uv2, uv3, offset)
   vbo:writeFloat(p1.x + offset.x, p1.y + offset.y, p1.z + offset.z);
   vbo:writeFloat(uv1.x, uv1.y);
   vbo:writeColor32(1,1,1);
-  
+
   vbo:writeFloat(p2.x + offset.x, p2.y + offset.y, p2.z + offset.z);
   vbo:writeFloat(uv2.x, uv2.y);
   vbo:writeColor32(1,1,1);
-  
+
   vbo:writeFloat(p3.x + offset.x, p3.y + offset.y, p3.z + offset.z);
   vbo:writeFloat(uv3.x, uv3.y);
   vbo:writeColor32(1,1,1);
@@ -24,7 +24,7 @@ function pushPoint(points, x, y, z)
   point.x = x;
   point.y = y;
   point.z = z;
-  
+
   table.insert(points, point);
 end
 
@@ -32,7 +32,7 @@ function SphereCreator:makeSphereMesh(c, r)
     local radius = r;
     local center = c;
     local p = {};
-    local uv = {};  
+    local uv = {};
     local stacks = 30;
     local slices = 30;
     local PI = 3.14159265359;
@@ -57,40 +57,40 @@ function SphereCreator:makeSphereMesh(c, r)
             local cosa1 = math.cos(a1);
             local sina1 = math.sin(a1);
 
-            pushPoint(p, 
-                        radius * sina1 * cosb1, 
-                        radius * sinb1        , 
+            pushPoint(p,
+                        radius * sina1 * cosb1,
+                        radius * sinb1        ,
                         radius * cosa1 * cosb1);
-                       
-            pushPoint(p, 
-                        radius * sina1 * cosb2, 
-                        radius * sinb2        , 
+
+            pushPoint(p,
+                        radius * sina1 * cosb2,
+                        radius * sinb2        ,
                         radius * cosa1 * cosb2);
             pushPoint(uv, x1, y1, 0);
-            pushPoint(uv, x1, y2, 0);  
+            pushPoint(uv, x1, y2, 0);
             count = count + 2;
-        end    
+        end
     end
-    
+
     local vertexFormat = MOAIVertexFormat.new ()
     vertexFormat:declareCoord ( 1, MOAIVertexFormat.GL_FLOAT, 3 )
     vertexFormat:declareUV ( 2, MOAIVertexFormat.GL_FLOAT, 2 )
     vertexFormat:declareColor ( 3, MOAIVertexFormat.GL_UNSIGNED_BYTE )
-  
+
     local vbo = MOAIVertexBuffer.new();
-    vbo:setFormat(vertexFormat);
-    vbo:reserveVerts(stacks*slices*8);
+    -- vbo:setFormat(vertexFormat);
+    vbo:reserve(stacks*slices*8);
 
     for i = 0, stacks-1, 1 do
     local k = 0;
         for j = 0, slices-1, 1 do
-          k = (j*2) + (i * 2*(slices+1));     
-          writeFace(vbo, p[k+1], p[k+2], p[k+4], p[k+3], uv[k+1], uv[k+2], uv[k+4], uv[k+3], center);     
-        end     
+          k = (j*2) + (i * 2*(slices+1));
+          writeFace(vbo, p[k+1], p[k+2], p[k+4], p[k+3], uv[k+1], uv[k+2], uv[k+4], uv[k+3], center);
+        end
     end
-    vbo:bless();
+    -- vbo:bless();
     local mesh = MOAIMesh.new();
-    mesh:setVertexBuffer(vbo);
+    mesh:setVertexBuffer(vbo, vertexFormat);
     mesh:setPrimType(MOAIMesh.GL_TRIANGLES);
     return mesh;
 end

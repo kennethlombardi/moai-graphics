@@ -38,7 +38,7 @@ function Scene:free()
     MessageManager = nil;
     LayerManager = nil;
     Factory = nil;
-    GameVariables = nil; 
+    GameVariables = nil;
 end
 
 local function addLayer(v)
@@ -47,7 +47,7 @@ local function addLayer(v)
 
     -- add a bounding volume for each prop
     local allProps = layer:getAllProps();
-    for index, prop in pairs(allProps) do 
+    for index, prop in pairs(allProps) do
         if prop.type == "Model" then
             print(prop.name);
             if SHOW_OCTREE == "TRUE" and prop.name == "horse" then
@@ -72,8 +72,8 @@ local function createLineStripMeshFromBox(p1, p2, p3, p4, p5, p6, p7, p8)
     vertexFormat:declareUV(2, MOAIVertexFormat.GL_FLOAT, 2);
     vertexFormat:declareColor(3, MOAIVertexFormat.GL_UNSIGNED_BYTE);
     local vbo = MOAIVertexBuffer.new();
-    vbo:setFormat(vertexFormat);
-    vbo:reserveVerts(24);
+    -- vbo:setFormat(vertexFormat);
+    vbo:reserve(24);
 
     function writePoint(v, uvx, uvy, color)
         vbo:writeFloat(v.x, v.y, v.z);
@@ -105,7 +105,7 @@ local function createLineStripMeshFromBox(p1, p2, p3, p4, p5, p6, p7, p8)
     writePoint(p8, 0, 0, back)
     writePoint(p8, 0, 0, back)
     writePoint(p5, 0, 0, back)
-    
+
     -- left
     writePoint(p1, 0, 0, left)
     writePoint(p5, 0, 0, left)
@@ -118,10 +118,10 @@ local function createLineStripMeshFromBox(p1, p2, p3, p4, p5, p6, p7, p8)
     writePoint(p4, 0, 0, right)
     writePoint(p8, 0, 0, right)
 
-    vbo:bless()
-  
+    -- vbo:bless()
+
     local mesh = MOAIMesh.new();
-    mesh:setVertexBuffer(vbo);
+    mesh:setVertexBuffer(vbo, vertexFormat);
     mesh:setPrimType(MOAIMesh.GL_LINES);
 
     local cube = require("ResourceManager"):load("Prop", "cubeProp");
@@ -194,12 +194,12 @@ end
 local function separateFaces(N, faces, pointOnPlane)
     local front = {}
     local back = {}
-    for k,face in pairs(faces) do 
+    for k,face in pairs(faces) do
         local inFrontCount = 0;
         if Math:dot3(N, Math:vertex3Sub(face.v1, pointOnPlane)) > 0 then inFrontCount = inFrontCount + 1 end
         if Math:dot3(N, Math:vertex3Sub(face.v2, pointOnPlane)) > 0 then inFrontCount = inFrontCount + 1 end
         if Math:dot3(N, Math:vertex3Sub(face.v3, pointOnPlane)) > 0 then inFrontCount = inFrontCount + 1 end
-        if inFrontCount > 2 then 
+        if inFrontCount > 2 then
             table.insert(front, face);
         else
             table.insert(back, face);
@@ -219,12 +219,12 @@ function autopartition(p1, p2, p3, p4, p5, p6, p7, p8, splitAxis, faces)
     local l = {};
     local r = {};
     local dividingPlaneVertices = {}
-    if splitAxis == "X" then 
+    if splitAxis == "X" then
         l, r, dividingPlaneVertices = partitionX(p1, p2, p3, p4, p5, p6, p7, p8)
-    elseif splitAxis == "Y" then 
-        l, r, dividingPlaneVertices = partitionY(p1, p2, p3, p4, p5, p6, p7, p8) 
-    elseif splitAxis == "Z" then 
-        l, r, dividingPlaneVertices = partitionZ(p1, p2, p3, p4, p5, p6, p7, p8) 
+    elseif splitAxis == "Y" then
+        l, r, dividingPlaneVertices = partitionY(p1, p2, p3, p4, p5, p6, p7, p8)
+    elseif splitAxis == "Z" then
+        l, r, dividingPlaneVertices = partitionZ(p1, p2, p3, p4, p5, p6, p7, p8)
     else
         print("Didn't autopartition on unknown axis")
     end
@@ -236,12 +236,12 @@ function autopartition(p1, p2, p3, p4, p5, p6, p7, p8, splitAxis, faces)
     return l, r, back, front, dividingPlaneFaces
 end
 
-local function addLayers() 
+local function addLayers()
     local layers = {}
     if SHOW_BUNNY == "TRUE" then
         table.insert(layers, "bunnyLayer.lua");
     end
-    
+
     if SHOW_LUCY == "TRUE" then
         table.insert(layers, "lucyLayer.lua");
     end
@@ -257,17 +257,17 @@ local function addLayers()
     if SHOW_DRAGON == "TRUE" then
         table.insert(layers, "dragonLayer.lua");
     end
-    
+
     table.insert(layers, "octreeLayer.lua")
     -- table.insert(layers, "horseLayer.lua");
-    -- 
+    --
     table.insert(layers, "OctreeHUDLayer.lua")
     -- table.insert(layers, "happyLayer.lua");
-    
+
     -- for all layers
         -- for each prop in layer
             -- add an aabb to layer for prop
-    for k, v in pairs(layers) do 
+    for k, v in pairs(layers) do
         addLayer(v);
     end
 
@@ -284,7 +284,7 @@ local function addLayers()
         return obj;
     end
 
-    for k,v in pairs(sceneObjs) do 
+    for k,v in pairs(sceneObjs) do
         modelToWorldObj(v.rotation, v.translation, v.scale, v);
     end
 
@@ -327,9 +327,9 @@ local function addLayers()
     end
 
     local faces = {}
-    for k,v in pairs(sceneObjs) do 
+    for k,v in pairs(sceneObjs) do
         modelToWorldFaces(v.rotation, v.translation, v.scale, v.faces);
-        for a,b in pairs(v.faces) do 
+        for a,b in pairs(v.faces) do
             table.insert(faces, b)
         end
     end
@@ -346,27 +346,27 @@ local function addLayers()
         local faces = obj.faces;
         local vertexFormat = createVertexFormat();
         local vbo = MOAIVertexBuffer.new()
-        vbo:setFormat(vertexFormat)
-        vbo:reserveVerts(3 * #faces);
-        
+        -- vbo:setFormat(vertexFormat)
+        vbo:reserve(3 * #faces);
+
         local function writeVertex(vbo, vertex, uv, color)
             vbo:writeFloat(vertex.x, vertex.y, vertex.z)
             vbo:writeFloat(uv.x, uv.y);
             vbo:writeColor32(color.r, color.g, color.b);
         end
-        
+
         for index, face in pairs(faces) do
             writeVertex(vbo, face.v1, {x = 0, y = 0}, color)
             writeVertex(vbo, face.v2, {x = 0, y = 0}, color)
             writeVertex(vbo, face.v3, {x = 0, y = 0}, color)
         end
-        
-        vbo:bless()
-        
+
+        -- vbo:bless()
+
         local mesh = MOAIMesh.new();
-        mesh:setVertexBuffer(vbo);
+        mesh:setVertexBuffer(vbo, vertexFormat);
         mesh:setPrimType(MOAIMesh.GL_TRIANGLES);
-        
+
         return mesh;
     end
 
@@ -402,7 +402,7 @@ local function addLayers()
 
     local function tabString(count)
         local string = ""
-        for i = 1, count do 
+        for i = 1, count do
             string = string.."\t"
         end
         return string
@@ -415,8 +415,8 @@ local function addLayers()
             if names[node.name] ~= nil then assert(false) end
             names[node.name] = node.name;
             local p = node.bv
-            if node.faces ~= nil then layer:insertProp(createPropFromFaces(node.faces, color)); end 
-            if SHOW_SPLIT_FACES == "TRUE" then 
+            if node.faces ~= nil then layer:insertProp(createPropFromFaces(node.faces, color)); end
+            if SHOW_SPLIT_FACES == "TRUE" then
                 layer:insertProp(createPropFromFaces(node.dpf, color));
             end
         elseif node.type == "NODE" then
@@ -426,7 +426,7 @@ local function addLayers()
                 if p ~= nil then layer:insertProp(createLineStripMeshFromBox(p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8])); end
             end
 
-            if SHOW_SPLIT_FACES == "TRUE" then 
+            if SHOW_SPLIT_FACES == "TRUE" then
                 layer:insertProp(createPropFromFaces(node.dpf, color));
             end
             node.left.color = color;
@@ -437,8 +437,8 @@ local function addLayers()
     end
 
     local MAX_DEPTH = 200;
-    function _buildBSPTree(p, depth, axis, faces, dpf) 
-        if #faces <= MIN_FACES  or (depth >= MAX_DEPTH) then 
+    function _buildBSPTree(p, depth, axis, faces, dpf)
+        if #faces <= MIN_FACES  or (depth >= MAX_DEPTH) then
             return {type = "LEAF", faces = faces, bv = p, dpf = dpf, name = uniqueName()}
         end
         local node = {type = "NODE", dpf = dpf, bv = p, name = uniqueName()}
@@ -447,7 +447,7 @@ local function addLayers()
         node.right = _buildBSPTree(r, depth + 1, getNextSplitAxis(axis), front, dividingPlaneFaces);
         return node;
     end
-    
+
     function buildBSPTree(p, depth, axis, faces)
         local l, r, back, front, dividingPlaneFaces = autopartition(p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], axis, faces);
         local root = {type = "NODE", dpf = dividingPlaneFaces, bv = p, name = uniqueName()}
@@ -489,7 +489,7 @@ local function addLayers()
     end
 
     function consumeOct(oct, color)
-        if oct.type == "LEAF" then 
+        if oct.type == "LEAF" then
             layer:insertProp(createPropFromFaces(oct.faces, color));
             if SHOW_LINE_GRID == "TRUE" then
                 local p = oct.p;
@@ -513,19 +513,19 @@ local function addLayers()
     end
 
     local tree = {}
-    if SHOW_BSP_TREE == "TRUE" then 
+    if SHOW_BSP_TREE == "TRUE" then
         tree = buildBSPTree({p1, p2, p3, p4, p5, p6, p7, p8}, 0, "X", faces)
         consumeTree(tree);
     elseif SHOW_OCTREE == "TRUE" then
         tree = buildOctree({p1, p2, p3, p4, p5, p6, p7, p8}, 0, faces)
         consumeOctree(tree);
     end
-    
-    
+
+
 end
 
 function Scene:enter()
-    addLayers();      
+    addLayers();
 end
 
 function Scene:exit()
@@ -533,7 +533,7 @@ function Scene:exit()
 end
 
 local function removeLayers()
-    LayerManager:removeAllLayers(); 
+    LayerManager:removeAllLayers();
 end
 
 function Scene.reset()
@@ -566,7 +566,7 @@ function Scene.vKeyPressed()
 end
 
 function Scene.gKeyPressed()
-    if SHOW_LINE_GRID == "TRUE" then 
+    if SHOW_LINE_GRID == "TRUE" then
         SHOW_LINE_GRID = "FALSE";
     elseif SHOW_LINE_GRID == "FALSE" then
         SHOW_LINE_GRID = "TRUE"
@@ -577,7 +577,7 @@ function Scene.gKeyPressed()
 end
 
 function Scene.fKeyPressed()
-    if SHOW_SPLIT_FACES == "TRUE" then 
+    if SHOW_SPLIT_FACES == "TRUE" then
         SHOW_SPLIT_FACES = "FALSE";
     elseif SHOW_SPLIT_FACES == "FALSE" then
         SHOW_SPLIT_FACES = "TRUE"

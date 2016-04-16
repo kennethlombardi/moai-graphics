@@ -62,8 +62,8 @@ local function makeCubeMesh(properties, extremal)
     vertexFormat:declareColor(3, MOAIVertexFormat.GL_UNSIGNED_BYTE);
 
     local vbo = MOAIVertexBuffer.new();
-    vbo:setFormat(vertexFormat);
-    vbo:reserveVerts(36);
+    -- vbo:setFormat(vertexFormat);
+    vbo:reserve(36);
 
     writeFace ( vbo, p [ 1 ], p [ 2 ], p [ 3 ], p [ 4 ], uv [ 1 ], uv [ 2 ], uv [ 3 ], uv [ 4 ])
     writeFace ( vbo, p [ 4 ], p [ 3 ], p [ 7 ], p [ 8 ], uv [ 1 ], uv [ 2 ], uv [ 3 ], uv [ 4 ])
@@ -72,10 +72,10 @@ local function makeCubeMesh(properties, extremal)
     writeFace ( vbo, p [ 5 ], p [ 1 ], p [ 4 ], p [ 8 ], uv [ 1 ], uv [ 2 ], uv [ 3 ], uv [ 4 ])
     writeFace ( vbo, p [ 2 ], p [ 6 ], p [ 7 ], p [ 3 ], uv [ 1 ], uv [ 2 ], uv [ 3 ], uv [ 4 ])
 
-    vbo:bless ()
-  
+    -- vbo:bless ()
+
     local mesh = MOAIMesh.new();
-    mesh:setVertexBuffer(vbo);
+    mesh:setVertexBuffer(vbo, vertexFormat);
     mesh:setPrimType(MOAIMesh.GL_TRIANGLES);
     return mesh, {vertices = p};
 end
@@ -97,7 +97,7 @@ end
 
 local function createAABBFromOBJs(objs, fileName)
     local vertices = {}
-    for k,obj in pairs(objs) do 
+    for k,obj in pairs(objs) do
         local x = Math:getExtremePointsAlongDirection({x = 1, y = 0 , z = 0}, obj.vertices);
         local y = Math:getExtremePointsAlongDirection({x = 0, y = 1 , z = 0}, obj.vertices);
         local z = Math:getExtremePointsAlongDirection({x = 0, y = 0 , z = 1}, obj.vertices);
@@ -115,7 +115,7 @@ function MOAIAABBCreator:create(properties)
     local cube = require("ResourceManager"):load("Prop", "cubeProp");
     local fileName = properties.obj and properties.obj.fileName or properties.fileName;
 
-    if not properties.objs then 
+    if not properties.objs then
         properties.objs = {properties.obj};
     end
     cube.mesh, cube.obj = createAABBFromOBJs(properties.objs, fileName);

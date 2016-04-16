@@ -34,7 +34,7 @@ function SimulationCore:setHistogramEnabled(bool)
 	print("SimulationCore:setHistogramEnabled is UNIMPLEMENTED");
 end
 
-function SimulationCore:setLeakTrackingEnabled(bool) 
+function SimulationCore:setLeakTrackingEnabled(bool)
 	print("SimulationCore:setLeakTrackingEnabled is UNIMPLEMENTED");
 end
 
@@ -42,7 +42,7 @@ function SimulationCore:setLuaAllocLogEnabled(bool)
 	print("SimulationCore:setLuaAllocLogEnabled is UNIMPLEMENTED");
 end
 
-function SimulationCore:shutdown() 
+function SimulationCore:shutdown()
 	print("SimulationCore:shutdown is UNIMPLEMENTED");
 end
 
@@ -77,7 +77,7 @@ function SimulationManager:registerCore(core)
 end
 
 function SimulationManager:setHistogramEnabled(bool)
-	self.core:setHistogramEnabled(bool);
+	-- self.core:setHistogramEnabled(bool);
 end
 
 function SimulationManager:setLeakTrackingEnabled(bool)
@@ -125,8 +125,8 @@ function MOAISimulationCore:setHistogramEnabled(bool)
 	MOAISim.setHistogramEnabled(bool);
 end
 
-function MOAISimulationCore:setLeakTrackingEnabled(bool) 
-	MOAISim.setLeakTrackingEnabled(bool);
+function MOAISimulationCore:setLeakTrackingEnabled(bool)
+	-- MOAISim.setLeakTrackingEnabled(bool);
 end
 
 function MOAISimulationCore:setLuaAllocLogEnabled(bool)
@@ -137,7 +137,8 @@ function MOAISimulationCore:shutdown()
 end
 
 function MOAISimulationCore:update(dt)
-	collectgarbage();
+	-- collectgarbage();
+	-- MOAISim.forceGC;
 end
 --
 

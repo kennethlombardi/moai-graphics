@@ -12,15 +12,15 @@ function MOAILayerCreator:create(properties)
     local propContainer = Factory:create("PropContainer");
 
     newLayer:setPropContainer(propContainer);
-    for k,v in pairs(properties.propContainer) do 
+    for k,v in pairs(properties.propContainer) do
         local newProp = Factory:create(v.type, v);
         if v.type == "Model" then
             newProp.fileName = v.fileName;
         end
-        
+
         newLayer:insertProp(newProp);
     end
-    
+
     -- viewport
     local windowManager = require "WindowManager";
     local screenWidth = windowManager.screenWidth;
@@ -37,7 +37,7 @@ function MOAILayerCreator:create(properties)
     newLayer:setViewport(newViewport);
     newLayer:setCamera(newCamera);
     newLayer:setName(properties.name);
-    newLayer:setType(properties.type);  
+    newLayer:setType(properties.type);
     newLayer:setVisible(properties.visible == "true");
     newLayer:setLoc(properties.position.x, properties.position.y, properties.position.z);
 
@@ -50,7 +50,8 @@ function MOAILayerCreator:create(properties)
 end
 
 function MOAILayerCreator:createFromFile(fileName)
-    dofile "Pickle.lua";
+    -- use the resource manager instead
+    dofile "resources/lua/Pickle.lua";
     local newObject;
     local objectIndex = 1;
     function deserialize(className, properties)
@@ -58,7 +59,8 @@ function MOAILayerCreator:createFromFile(fileName)
         newObject = Factory:create(cucumber.type, cucumber)
         objectIndex = objectIndex + 1;
     end
-    local path = "../layers/"..fileName;
+    -- use the resource manager to get path at least
+    local path = "resources/layers/"..fileName;
     dofile (path)
     if objectIndex > 2 then print("MORE THAN ONE LAYER IN LAYER FILE: "..path) end;
     return newObject;

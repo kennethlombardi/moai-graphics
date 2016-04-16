@@ -15,7 +15,7 @@ objectCount = 3;
 for i = 1, objectCount do
 	position = {x = math.random(-300, 300), y = math.random(-300, 300), z = -1000};
 	scale = {x = 10, y = 10, z = 10};
-	if i % 100 == 0 then 
+	if i % 100 == 0 then
 		scale = {x = 100, y = 100, z = 100}
 	end
 	prop = {
@@ -50,8 +50,8 @@ for i = 1, objectCount do
 			z = 0,
 		},
 		scale = {
-			x = 1, 
-			y = 1, 
+			x = 1,
+			y = 1,
 			z = 1,
 		},
 		textSize = 24,
@@ -89,7 +89,7 @@ end
 
 function unpickleMe(s)
   local tables = s;
-  
+
   for tnum = 1, table.getn(tables) do
     local t = tables[tnum]
     local tcopy = {}; for i, v in pairs(t) do tcopy[i] = v end

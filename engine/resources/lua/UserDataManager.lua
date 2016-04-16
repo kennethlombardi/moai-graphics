@@ -11,7 +11,8 @@ function UserDataManager:set(key, value)
 end
 
 function UserDataManager:flush()
-    local file = io.open("../userData/userData.lua", "wt");
+    -- Should use the resource manager here
+    local file = io.open("resources/userData/userData.lua", "wt");
 	if file then
 		s = "deserialize (";
 		file:write(s);
@@ -23,11 +24,11 @@ function UserDataManager:flush()
 	else
 		print("No file found");
 		--local stream = MOAIFileStream.new();
-		--stream:open('UserData', MOAIFileStream.READ_WRITE_NEW);		
+		--stream:open('UserData', MOAIFileStream.READ_WRITE_NEW);
 		--stream:writeFormat('u32', self.get("highScore"));
 		--stream:close();
-	end	
-	
+	end
+
 end
 
 
@@ -40,7 +41,7 @@ function init()
 	if not userData then
 		print("no Data!");
 	end
-    for k,v in pairs(userData) do 
+    for k,v in pairs(userData) do
         UserDataManager:set(k, v);
     end
 end

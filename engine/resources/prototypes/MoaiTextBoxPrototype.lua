@@ -16,7 +16,19 @@ end
 
 function MOAITextBoxPrototype:setFont(font)
 	self:baseSetFont(font);
-	self.underlyingType:setFont(font);
+	-- self.underlyingType:setFont(font);
+end
+
+function MOAITextBoxPrototype:setStyle()
+    function newStyle(font, size)
+        local style = MOAITextStyle.new()
+        style:setFont(font)
+        style:setSize(size)
+        return style;
+    end
+    local style = newStyle(self.font, self.textSize)
+	self:baseSetStyle(style);
+	self.underlyingType:setStyle(style);
 end
 
 function MOAITextBoxPrototype:setLoc(x, y, z)

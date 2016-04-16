@@ -22,14 +22,15 @@ end
 local function initialize()
     require("SimulationManager"):setLeakTrackingEnabled(true);
     require("SimulationManager"):setHistogramEnabled(true);
-    require("SceneManager"):addSceneFromFile('assignment5-OctreeScene.lua');
-	
+    -- require("SceneManager"):addSceneFromFile('assignment5-OctreeScene.lua');
+    require("SceneManager"):addSceneFromFile('assignment2-BoundingVolumesScene.lua');
+
     -- simulation state
-    MOAIGfxDevice.setClearDepth(true);
+    -- MOAIGfxDevice.setClearDepth(true);
 
     require("MessageManager"):listen("QUIT", onQuit);
 	require("MessageManager"):send("GAME_INITIALIZED")
-	
+
     print("Initialized");
 end
 
@@ -44,8 +45,8 @@ local function shutdown()
     require("WindowManager"):shutdown();
     require("SoundManager"):shutdown();
     require("SceneManager"):shutdown();
-    require("ShapesLibrary"):shutdown();  
-    require("GameVariables"):shutdown();  
+    require("ShapesLibrary"):shutdown();
+    require("GameVariables"):shutdown();
     require("ConfigurationManager"):shutdown();
     require("UserDataManager"):shutdown();
 
@@ -69,12 +70,12 @@ end
 function gamesLoop ()
     preInitialize();
     initialize();
-	
+
     while not done do
         update(require("SimulationManager"):getStep());
         coroutine.yield()
     end
-  
+
     preShutdown();
     shutdown();
     os.exit();
