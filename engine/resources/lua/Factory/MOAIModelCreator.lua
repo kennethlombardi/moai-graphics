@@ -50,7 +50,7 @@ function MOAIModelCreator:create(properties)
     propPrototype:setShader(shader, properties.shaderName);
     propPrototype:getUnderlyingType():setDeck(properties.mesh);
     propPrototype:getUnderlyingType():setDepthTest(MOAIProp.DEPTH_TEST_LESS_EQUAL);
-    --propPrototype:getUnderlyingType():setCullMode(MOAIProp2D.CULL_baCK)
+    --propPrototype:getUnderlyingType():setCullMode(MOAIProp2D.CULL_BACK)
 
     return propPrototype;
 end
