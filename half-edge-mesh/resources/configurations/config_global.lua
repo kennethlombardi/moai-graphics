@@ -1,0 +1,3 @@
+deserialize {
+	mainThread = "ManagerGameLoop"
+}
