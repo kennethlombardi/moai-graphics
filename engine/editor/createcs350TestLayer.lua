@@ -1,4 +1,4 @@
-dofile("Pickle.lua")
+dofile("resources/lua/Pickle.lua")
 
 layer1 = {
     type = "Layer",
@@ -46,7 +46,7 @@ table.insert(layers, layer1);
 local function pickleThis()
     layerCount = 0;
     for k,v in pairs(layers) do
-        file = io.open(".\\generated\\cs350TestLayer"..".lua", "wt");
+        file = io.open("editor/generated/cs350TestLayer.lua", "wt");
         s = "deserialize (\"Layer\",\n";
         file:write(s);
         s = pickle(v);

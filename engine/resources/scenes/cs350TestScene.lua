@@ -2,7 +2,7 @@ local Scene = {}
 
 local MessageManager = require("MessageManager");
 local LayerManager = require("LayerManager");
-local Factory = require("Factory");
+local Factory = require("./Factory/Factory");
 local UserDataManager = require("UserDataManager");
 local GameVariables = require("GameVariables");
 

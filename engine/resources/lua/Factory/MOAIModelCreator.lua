@@ -13,8 +13,7 @@ local function objToMesh(obj)
     local faces = obj.faces;
     local vertexFormat = createVertexFormat();
     local vbo = MOAIVertexBuffer.new()
-    -- vbo:setFormat(vertexFormat)
-    vbo:reserve(3 * #faces);
+    vbo:reserve(3 * #faces * vertexFormat:getVertexSize());
 
     local function writeVertex(vbo, vertex, uv, color)
         vbo:writeFloat(vertex.x, vertex.y, vertex.z)
@@ -29,12 +28,11 @@ local function objToMesh(obj)
         writeVertex(vbo, face.v3, {x = 0, y = 0}, color)
     end
 
-    -- vbo:bless()
-
     local mesh = MOAIMesh.new();
     mesh:setVertexBuffer(vbo, vertexFormat);
     mesh:setPrimType(MOAIMesh.GL_TRIANGLES);
-
+    mesh:setTotalElements ( vbo:countElements ( vertexFormat ))
+    mesh:setBounds ( vbo:computeBounds ( vertexFormat ))
     return mesh;
 end
 
@@ -44,13 +42,14 @@ function MOAIModelCreator:create(properties)
         local obj = Factory:create("Obj", properties);
         properties.mesh = objToMesh(obj)
     end
+
     properties.mesh:setTexture(require("ResourceManager"):load("Texture", properties.textureName):getUnderlyingType());
     local propPrototype = Factory:create("MOAIPropPrototype", properties);
     local shader = Factory:create("Shader", properties.shaderName);
     propPrototype:setShader(shader, properties.shaderName);
     propPrototype:getUnderlyingType():setDeck(properties.mesh);
     propPrototype:getUnderlyingType():setDepthTest(MOAIProp.DEPTH_TEST_LESS_EQUAL);
-    --propPrototype:getUnderlyingType():setCullMode(MOAIProp2D.CULL_BACK)
+    -- propPrototype:getUnderlyingType():setCullMode(MOAIProp2D.CULL_BACK)
 
     return propPrototype;
 end

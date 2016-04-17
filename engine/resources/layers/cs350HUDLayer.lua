@@ -34,21 +34,21 @@ deserialize ("Layer",
 		["position"]={9},
 		["string"]="",
 		["justification"]="center_justify",
-		["textSize"]=60,
+		["textSize"]=30,
 		["scripts"]={10},
 	},
 
 	{--Entry Number: {6}
-		["y"]=1,
-		["x"]=1,
-		["z"]=1,
+		["y"]=0.5,
+		["x"]=0.5,
+		["z"]=0.5,
 	},
 
 	{--Entry Number: {7}
-		["x2"]=300,
-		["y2"]=100,
-		["y1"]=-100,
-		["x1"]=-300,
+		["x2"]=150,
+		["y2"]=50,
+		["y1"]=-50,
+		["x1"]=-150,
 	},
 
 	{--Entry Number: {8}
@@ -58,8 +58,8 @@ deserialize ("Layer",
 	},
 
 	{--Entry Number: {9}
-		["y"]=250,
-		["x"]=-400,
+		["y"]=100,
+		["x"]=0,
 		["z"]=0,
 	},
 

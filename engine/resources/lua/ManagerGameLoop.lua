@@ -23,10 +23,12 @@ local function initialize()
     require("SimulationManager"):setLeakTrackingEnabled(true);
     require("SimulationManager"):setHistogramEnabled(true);
     -- require("SceneManager"):addSceneFromFile('assignment5-OctreeScene.lua');
-    require("SceneManager"):addSceneFromFile('assignment2-BoundingVolumesScene.lua');
+    -- require("SceneManager"):addSceneFromFile('assignment2-BoundingVolumesScene.lua');
+    require("SceneManager"):addSceneFromFile('cs350TestScene.lua');
 
     -- simulation state
     -- MOAIGfxDevice.setClearDepth(true);
+    MOAIGfxDevice.getFrameBuffer ():setClearDepth ( true )
 
     require("MessageManager"):listen("QUIT", onQuit);
 	require("MessageManager"):send("GAME_INITIALIZED")

@@ -1,4 +1,4 @@
-dofile("Pickle.lua")
+dofile("resources/lua/Pickle.lua")
 
 layer1 = {
     type = "LayerDD",
@@ -13,13 +13,13 @@ layer1 = {
 yourScoreText = {
     type = "TextBox",
     name = "dist",
-    position = {x = -400, y = 250, z = 0};
-    scale = {x = 1, y = 1, z = 1};
+    position = {x = 0, y = 100, z = 0};
+    scale = {x = .5, y = .5, z = .5};
     rotation = {x = 0, y = 0, z = 0};
-    rectangle = {x1 = -300, x2 = 300, y1 = -100, y2 = 100},
+    rectangle = {x1 = -150, x2 = 150, y1 = -50, y2 = 50},
     scripts = {"currentlySelectedBoundingVolumeAlgorithmUpdate.lua"},
     shaderName = "none",
-    textSize = 60,
+    textSize = 30,
     justification = "center_justify",
     string = "",
     fontName = "arial-rounded"
@@ -27,7 +27,8 @@ yourScoreText = {
 table.insert(layer1.propContainer, yourScoreText);
 
 local function pickleThis()
-    file = io.open(".\\generated\\cs350HUDLayer"..".lua", "wt");
+    -- file = io.open(".\\generated\\cs350HUDLayer"..".lua", "wt");
+    file = io.open("editor/generated/cs350HUDLayer.lua", "wt");
     s = "deserialize (\"Layer\",\n";
     file:write(s);
     s = pickle(layer1);
