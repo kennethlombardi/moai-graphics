@@ -15,10 +15,11 @@ function Script.update(object, dt)
     local sPressed = InputManager:isKeyPressed(InputManager.Key["s"]);
     local dPressed = InputManager:isKeyPressed(InputManager.Key["d"]);
 
-    rotation.y = rotation.y - move.x  * lookSpeed;
-    rotation.x = rotation.x + move.y * lookSpeed;
+    -- weird mouse following bullshittery
+    -- rotation.y = rotation.y - move.x  * lookSpeed;
+    -- rotation.x = rotation.x + move.y * lookSpeed;
 
-    if wPressed then 
+    if wPressed then
         position.z = position.z - math.cos((math.pi / 180) * rotation.y) * moveSpeed;
         position.y = position.y + math.sin((math.pi / 180) * rotation.x) * moveSpeed;
         position.x = position.x - math.sin((math.pi / 180) * rotation.y) * moveSpeed;

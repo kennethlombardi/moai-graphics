@@ -17,7 +17,7 @@ function MOAILayerCreator:create(properties)
         if v.type == "Model" then
             newProp.fileName = v.fileName;
         end
-
+        print("INSERTING PROP", v.type, v.fileName)
         newLayer:insertProp(newProp);
     end
 

@@ -28,6 +28,7 @@ local function initialize()
 
     -- simulation state
     -- MOAIGfxDevice.setClearDepth(true);
+    MOAIGfxDevice.getFrameBuffer ():setClearDepth ( true )
 
     require("MessageManager"):listen("QUIT", onQuit);
 	require("MessageManager"):send("GAME_INITIALIZED")
