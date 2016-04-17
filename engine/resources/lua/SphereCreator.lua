@@ -78,7 +78,6 @@ function SphereCreator:makeSphereMesh(c, r)
     vertexFormat:declareColor ( 3, MOAIVertexFormat.GL_UNSIGNED_BYTE )
 
     local vbo = MOAIVertexBuffer.new();
-    -- vbo:setFormat(vertexFormat);
     vbo:reserve(stacks*slices*8);
 
     for i = 0, stacks-1, 1 do
@@ -88,11 +87,13 @@ function SphereCreator:makeSphereMesh(c, r)
           writeFace(vbo, p[k+1], p[k+2], p[k+4], p[k+3], uv[k+1], uv[k+2], uv[k+4], uv[k+3], center);
         end
     end
-    -- vbo:bless();
+
     local mesh = MOAIMesh.new();
     mesh:setVertexBuffer(vbo, vertexFormat);
     mesh:setTotalElements(vbo:countElements(vertexFormat))
     mesh:setPrimType(MOAIMesh.GL_TRIANGLES);
+    -- this is missing some stuff for host v1.7
+    -- see MoaiModelCreator for an example
     return mesh;
 end
 
